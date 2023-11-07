@@ -14,7 +14,10 @@ class WeatherApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('Weather App'),
         ),
-        body: WeatherPage(),
+        body: Container(
+          color: Colors.blue, // Set the background color to blue
+          child: WeatherPage(),
+        ),
       ),
     );
   }
@@ -35,60 +38,62 @@ class _WeatherPageState extends State<WeatherPage> {
   double temperature = 0;
   int humidity = 0;
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/$description.jpg"),//make this an image on the left with details on the right of it and bottom
-            fit: BoxFit.cover,
-          ),
-        ),
+        padding: EdgeInsets.all(20), // Add padding for spacing
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
-              controller: cityController,
-              decoration: InputDecoration(
-                labelText: 'City',
+            Container(
+              alignment: Alignment.center,
+              width: 300,
+              child: TextField(
+                controller: cityController,
+                decoration: InputDecoration(
+                  labelText: 'City',
+                ),
               ),
             ),
-          SizedBox(height: 10),
-          TextField(
-            controller: countryCodeController,
-            decoration: InputDecoration(
-              labelText: 'Country Code',
+            SizedBox(height: 10),
+            Container(
+              alignment: Alignment.center,
+              width: 300,
+              child: TextField(
+                controller: countryCodeController,
+                decoration: InputDecoration(
+                  labelText: 'Country Code',
+                ),
+              ),
             ),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'City: $cityName',
-            style: TextStyle(fontSize: 20),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Temperature: $temperature °C',
-            style: TextStyle(fontSize: 20),
-          ),
-          Text(
-            'Humidity: $humidity %',
-            style: TextStyle(fontSize: 20),
-          ),
-          Text(
-            'Description: $description',
-            style: TextStyle(fontSize: 20),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              fetchWeather();
-            },
-            child: Text('Get Weather'),
-          ),
-        ],
+            SizedBox(height: 20),
+            Text(
+              'City: $cityName',
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Temperature: $temperature °C',
+              style: TextStyle(fontSize: 20),
+            ),
+            Text(
+              'Humidity: $humidity %',
+              style: TextStyle(fontSize: 20),
+            ),
+            Text(
+              'Description: $description',
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                fetchWeather();
+              },
+              child: Text('Get Weather'),
+            ),
+          ],
+        ),
       ),
-      )
     );
   }
 
@@ -98,16 +103,12 @@ class _WeatherPageState extends State<WeatherPage> {
     final countryCode = countryCodeController.text;
 
     final apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=$city,$countryCode&appid=$apiKey&units=metric';
-    print(apiUrl); //test if it returns working link
     final response = await http.get(Uri.parse(apiUrl));
-    print(response);//returned reponse
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      print(data); //Testing
       setState(() {
         temperature = data['main']['temp'] as double;
-        print(temperature); //Testing
         humidity = data['main']['humidity'] as int;
         description = data['weather'][0]['description'] as String;
         cityName = data['name'] as String;
